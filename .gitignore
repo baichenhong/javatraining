@@ -26,3 +26,5 @@ hs_err_pid*
 *.classpath
 web/servlet/target/
 web/servlet/.settings/
+db/servletdb/target/
+db/servletdb/.settings/
