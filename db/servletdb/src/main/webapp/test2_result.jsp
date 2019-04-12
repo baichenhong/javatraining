@@ -5,6 +5,18 @@
 <head>
 <meta charset="UTF-8">
 <title>test2 result</title>
+<style type="text/css">
+td {
+	border: solid #add9c0;
+	border-width: 0px 1px 1px 0px;
+	padding: 10px 0px;
+}
+
+table {
+	border: solid #add9c0;
+	border-width: 1px 0px 0px 1px;
+}
+</style>
 </head>
 <body>
 	<%
@@ -15,14 +27,17 @@
 
 	<div style="width: 80%; margin: auto;">
 		<table style="width: 80%; margin: auto;">
+			<% if(result != null) {%>
 			<tr>
 				<td colspan="2" style="width: 80%; text-align: center;">
-					<%=result.booleanValue()%>
+					下面是提交的注册信息，注册结果是:<%out.print(result.booleanValue());%>
 				</td>
 			</tr>
+			<%} else {%>
 			<tr>
-				<td colspan="2" style="width: 80%; text-align: center;">提交的注册信息:</td>
+				<td colspan="2" style="width: 80%; text-align: center;">用户信息</td>
 			</tr>
+			<% }%>
 			<tr>
 				<td style="width: 50%; text-align: right;">用户名:</td>
 				<td style="width: 50%; text-align: left;"><%=user.getUsername()%></td>

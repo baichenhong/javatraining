@@ -25,8 +25,7 @@ public class Test2Servlet extends HttpServlet {
 	private static final long serialVersionUID = 5771529038846994426L;
 
 	private static final Log log = LogFactory.getLog(Test2Servlet.class);
-	
-	
+
 	private UserManager userManager = new UserManager();
 
 	/**
@@ -36,9 +35,25 @@ public class Test2Servlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		List<User> users = userManager.getUsers();
-		request.setAttribute("users", users);
-		request.getRequestDispatcher("test2_all.jsp").forward(request, response);
+		String action = "list";
+		if (request.getParameter("action") != null) {
+			action = request.getParameter("action");
+		}
+		if ("view".equals(action)) {
+			String id = request.getParameter("id");
+			User user = userManager.getUserById(Long.parseLong(id));
+			request.setAttribute("user", user);
+			request.getRequestDispatcher("test2_result.jsp").forward(request, response);
+		} else if ("delete".equals(action)) {
+			String id = request.getParameter("id");
+			boolean result = userManager.deleteUser(Long.parseLong(id));
+			request.setAttribute("result", Boolean.valueOf(result));
+			request.getRequestDispatcher("test2_action.jsp").forward(request, response);
+		} else {
+			List<User> users = userManager.getUsers();
+			request.setAttribute("users", users);
+			request.getRequestDispatcher("test2_all.jsp").forward(request, response);
+		}
 	}
 
 	/**
@@ -72,10 +87,10 @@ public class Test2Servlet extends HttpServlet {
 		}
 
 		boolean result = userManager.addUser(user);
-		
+
 		request.setAttribute("result", Boolean.valueOf(result));
 		request.setAttribute("user", user);
-		
+
 		request.getRequestDispatcher("test2_result.jsp").forward(request, response);
 	}
 

@@ -27,7 +27,11 @@ public class UserManager {
 
 	private String insersql = "INSERT INTO tusers (username,password,name,sex,province) VALUES(?,?,?,?,?)";
 
-	private String selectsql = "SELECT * FROM tusers";
+	private String selectallsql = "SELECT * FROM tusers";
+	
+	private String selectsql = "SELECT * FROM tusers WHERE id = ?";
+
+	private String deletesql = "DELETE FROM tusers WHERE id = ?";
 
 	public boolean addUser(User u) {
 		boolean result = false;
@@ -68,7 +72,52 @@ public class UserManager {
 	}
 
 	public User getUserById(long id) {
-		return null;
+		User result = null;
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, user, password);
+			ps = con.prepareStatement(selectsql);
+			ps.setLong(1, id);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				result = new User();
+
+				result.setId(rs.getInt("id"));
+				result.setUsername(rs.getString("username"));
+				result.setPassword(rs.getString("password"));
+				result.setName(rs.getString("name"));
+				result.setSex(rs.getString("sex"));
+				result.setProvince(rs.getString("province"));
+			}
+		} catch (SQLException e) {
+			log.error("get users failed", e);
+		} catch (ClassNotFoundException e) {
+			log.error("get users failed", e);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+		log.debug("get user" + result);
+		return result;
 	}
 
 	public User getUserByName(String name) {
@@ -83,7 +132,7 @@ public class UserManager {
 		try {
 			Class.forName(driver);
 			con = DriverManager.getConnection(url, user, password);
-			ps = con.prepareStatement(selectsql);
+			ps = con.prepareStatement(selectallsql);
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				User u = new User();
@@ -125,7 +174,37 @@ public class UserManager {
 		return result;
 	}
 
-	public void deleteUser(long id) {
-
+	public boolean deleteUser(long id) {
+		boolean result = false;
+		Connection con = null;
+		PreparedStatement ps = null;
+		try {
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, user, password);
+			ps = con.prepareStatement(deletesql);
+			ps.setLong(1, id);
+			int i = ps.executeUpdate();
+			if (i == 1) {
+				result = true;
+			}
+		} catch (SQLException e) {
+			log.error("add user failed", e);
+		} catch (ClassNotFoundException e) {
+			log.error("add user failed", e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+		return result;
 	}
 }
